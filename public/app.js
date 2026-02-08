@@ -1,4 +1,6 @@
-const API_URL = 'http://localhost:3000/api';
+
+const API_URL = '/api'; 
+
 let token = localStorage.getItem('token');
 
 window.showSection = async function(sectionId) {
@@ -330,7 +332,6 @@ window.searchWiki = async function() {
 
         const topResults = data.slice(0, 2);
 
-        // Чертежи (Blueprints)
         const blueprints = [
             'https://w0.peakpx.com/wallpaper/387/527/HD-wallpaper-porsche-911-drawing-sketch-art.jpg',
             'https://i.pinimg.com/originals/1c/19/2f/1c192f1680d96d2994f318350505167b.jpg'
@@ -340,7 +341,6 @@ window.searchWiki = async function() {
             ${topResults.map((car, index) => {
                 const imgUrl = blueprints[index % blueprints.length];
                 
-                // Проверяем данные, чтобы не писать "undefined" или "subscriber only"
                 const engine = car.cylinders ? `${car.cylinders} Cylinders` : 'Electric / Hybrid';
                 const drive = car.drive ? car.drive.toUpperCase() : 'AWD';
                 const trans = car.transmission || 'PDK Automatic';
@@ -391,7 +391,7 @@ window.updateProfile = async function() {
         });
         if (res.ok) {
             alert('Profile updated!');
-            showSection('profile'); // Перезагрузить данные
+            showSection('profile');
         }
     } catch(err) { alert('Error updating'); }
 };
@@ -429,12 +429,9 @@ async function loadMyRentals() {
     }
 }
 
-// Новая функция для возврата
 window.returnCar = async function(id) {
-    //if(!confirm("Return this vehicle?")) return;
 
     try {
-        // ТУТ ТОЖЕ POST
         const res = await fetch(`${API_URL}/cars/return/${id}`, {
             method: 'POST',
             headers: { 'x-auth-token': token }
@@ -442,7 +439,6 @@ window.returnCar = async function(id) {
 
         if (res.ok) {
             alert('Car returned!');
-            // Если мы в профиле - обновляем профиль, если в каталоге - каталог
             if (typeof loadMyRentals === 'function') loadMyRentals();
             if (typeof loadCars === 'function') loadCars();
         } else {
@@ -452,5 +448,4 @@ window.returnCar = async function(id) {
 };
 
 
-// Обнови функцию showSection, добавив туда блок для 'profile':
 

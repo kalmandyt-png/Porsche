@@ -1,5 +1,8 @@
-require('dotenv').config();
+
+const connectDB = require('./config/db');
+connectDB(); 
 const express = require('express');
+app.use(express.static('public'));
 
 const connectDB = require('./config/db');
 const path = require('path');

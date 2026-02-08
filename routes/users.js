@@ -3,9 +3,6 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const User = require('../models/User');
 
-// @route   GET /api/users/profile
-// @desc    Get current user profile
-// @access  Private
 router.get('/profile', auth, async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
@@ -15,13 +12,9 @@ router.get('/profile', auth, async (req, res, next) => {
     }
 });
 
-// @route   PUT /api/users/profile
-// @desc    Update user profile
-// @access  Private
 router.put('/profile', auth, async (req, res, next) => {
     try {
         const { username } = req.body;
-        // Build user object
         const userFields = {};
         if (username) userFields.username = username;
 
