@@ -1,6 +1,4 @@
-
-const connectDB = require('./config/db');
-connectDB(); 
+require('dotenv').config();
 const express = require('express');
 app.use(express.static('public'));
 
