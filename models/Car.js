@@ -11,8 +11,16 @@ const CarSchema = new mongoose.Schema({
   pricePerDay: { type: Number, required: true },
   imageUrl: { type: String },
   description: { type: String },
-  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  createdAt: { type: Date, default: Date.now },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Ссылка на коллекцию users
+    required: true // Чтобы нельзя было создать машину без владельца
+  },
+  
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
   
   // Добавили поле renter
   renter: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }

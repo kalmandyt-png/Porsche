@@ -1,13 +1,12 @@
 const API_URL = 'http://localhost:3000/api';
 let token = localStorage.getItem('token');
 
-// Добавляем слово async перед function
 window.showSection = async function(sectionId) {
     console.log("Switching to section:", sectionId);
 
     if ((sectionId === 'profile') && !token) {
         alert("Please sign in to access this section.");
-        sectionId = 'auth'; // Принудительно меняем на страницу входа
+        sectionId = 'auth';
     }
     document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
     
@@ -19,17 +18,14 @@ window.showSection = async function(sectionId) {
         if (sectionId === 'showroom') {
         loadCars();
         
-        // Проверяем админа
         const role = localStorage.getItem('role');
         const addBtn = document.getElementById('add-car-btn');
         
-        // Показываем кнопку ТОЛЬКО админу
         if (addBtn) {
             if (role === 'admin') {
                 addBtn.style.display = 'block';
             } else {
                 addBtn.style.display = 'none';
-                // На всякий случай скрываем и панель добавления, если она была открыта
                 document.getElementById('add-car-panel').style.display = 'none';
             }
         }
@@ -38,7 +34,6 @@ window.showSection = async function(sectionId) {
     } 
     else if (sectionId === 'profile') {
         try {
-            // Загружаем профиль
             const res = await fetch(`${API_URL}/users/profile`, {
                 headers: { 'x-auth-token': token }
             });
@@ -48,7 +43,6 @@ window.showSection = async function(sectionId) {
                 document.getElementById('profile-email').innerText = user.email;
                 document.getElementById('profile-username').innerText = user.username;
                 
-                // ВОТ ЗДЕСЬ нужно вызывать загрузку аренд (отдельной строкой)
                 loadMyRentals(); 
             } else {
                 alert('Failed to load profile. Please login again.');
@@ -65,19 +59,15 @@ window.showSection = async function(sectionId) {
 window.logout = function() {
     console.log("Logging out...");
     
-    // Очищаем всё
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     localStorage.removeItem('userId');
     token = null;
 
-    // Обновляем кнопки меню
     updateNav();
 
-    // ЯВНО переключаем на экран входа
     window.showSection('auth'); 
     
-    // Дополнительно: сбрасываем формы, чтобы было чисто
     document.getElementById('login-form').reset();
     document.getElementById('register-form').reset();
     document.getElementById('login-block').style.display = 'block';
@@ -89,34 +79,25 @@ function updateNav() {
     const authBtn = document.getElementById('auth-btn');
     const logoutBtn = document.getElementById('logout-btn');
     
-    // Найдем кнопки меню, которые нужно прятать
-    // В index.html добавь ID кнопке профиля: <button id="nav-profile" ...>
-    // Или найдем её по тексту (менее надежно, лучше добавь ID в HTML)
     const profileBtn = document.querySelector('button[onclick="showSection(\'profile\')"]');
 
     if (token) {
-        // Если вошли
         if(authBtn) authBtn.style.display = 'none';
         if(logoutBtn) logoutBtn.style.display = 'inline-block';
-        if(profileBtn) profileBtn.style.display = 'inline-block'; // Показываем профиль
+        if(profileBtn) profileBtn.style.display = 'inline-block'; 
     } else {
-        // Если вышли
         if(authBtn) authBtn.style.display = 'inline-block';
         if(logoutBtn) logoutBtn.style.display = 'none';
-        if(profileBtn) profileBtn.style.display = 'none'; // Скрываем профиль
+        if(profileBtn) profileBtn.style.display = 'none';
     }
 }
 
 
-
-// --- Auth Toggle Logic ---
-// Сделаем функцию глобальной, чтобы она была видна из HTML onclick
 window.toggleAuth = function(type) {
     console.log("Toggling auth to:", type);
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     
-    // Сбрасываем поля
     loginForm.reset();
     registerForm.reset();
 
@@ -129,10 +110,8 @@ window.toggleAuth = function(type) {
     }
 };
 
-// --- Event Listeners (Ждем загрузки DOM) ---
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Login Handler
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -151,9 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (res.ok) {
                     token = data.token;
-                    // Сохраняем роль и ID в localStorage
                     localStorage.setItem('token', token);
-                    localStorage.setItem('role', data.user.role); // <--- ВАЖНО
+                    localStorage.setItem('role', data.user.role); 
                     localStorage.setItem('userId', data.user.id);
                     
                     alert("Login Successful!");
@@ -168,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Register Handler
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
@@ -201,18 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Инициализация при загрузке
     updateNav();
 });
 
-// --- Logout ---
 window.logout = function() {
     localStorage.removeItem('token');
     token = null;
     updateNav();
 };
 
-// --- Showroom & Wiki Logic (Оставляем как есть, но добавляем проверки) ---
 async function loadCars() {
     const list = document.getElementById('car-list');
     if (!list) return;
@@ -222,23 +196,19 @@ async function loadCars() {
         const cars = await res.json();
         
                 list.innerHTML = cars.map(car => {
-            const isRented = car.status === 'Rented';
+            const isRented = car.renter && car.renter !== null; 
             const currentUserRole = localStorage.getItem('role');
             
             let actionBtn = '';
 
             if (isRented) {
-                // Случай 1: Машина занята
                 actionBtn = `<div style="text-align:center; padding: 12px; color: #666; font-size: 0.8rem; letter-spacing: 1px; border: 1px dashed #333;">CURRENTLY UNAVAILABLE</div>`;
             } else if (!token) {
-                // Случай 2: Машина свободна, но юзер не вошел
                 actionBtn = `<button onclick="showSection('auth')" style="width:100%; padding:12px; background:transparent; border:1px solid #444; color:#888; cursor:pointer; font-size:0.8rem; letter-spacing:1px; transition:all 0.3s;">SIGN IN TO RESERVE</button>`;
             } else {
-                // Случай 3: Машина свободна, юзер вошел
                 actionBtn = `<button onclick="rentCar('${car._id}')" class="btn-rent">RESERVE NOW</button>`;
             }
 
-            // Кнопка удаления (только админ)
             const deleteBtn = (currentUserRole === 'admin') 
                 ? `<button onclick="deleteCar('${car._id}')" class="btn-delete">Remove Vehicle</button>`
                 : '';
@@ -266,13 +236,16 @@ async function loadCars() {
     } catch (err) { console.error("Error loading cars:", err); }
 }
 
-// Добавляем функцию аренды сюда же в app.js (можно в конец файла)
+
 window.rentCar = async function(id) {
-    if (!confirm('Confirm rental for this Porsche?')) return;
+    console.log("Button clicked for ID:", id);
+
+
     
     try {
+
         const res = await fetch(`${API_URL}/cars/rent/${id}`, {
-            method: 'PUT',
+            method: 'POST', 
             headers: { 'x-auth-token': token }
         });
         
@@ -280,17 +253,18 @@ window.rentCar = async function(id) {
         
         if (res.ok) {
             alert('Congratulations! You have rented the Porsche.');
-            loadCars(); // Обновляем список, чтобы кнопка пропала
+            loadCars();
         } else {
-            alert(data.msg);
+            alert(data.msg || 'Error renting car');
         }
     } catch (err) {
-        alert('Error processing rental');
-    }
+    console.error("ВОТ ГДЕ ОШИБКА:", err);
+    alert('Error processing rental');
+    }   
+
 };
 
 
-// Добавляем обработчик для добавления машины
 const carForm = document.getElementById('car-form');
 if (carForm) {
     carForm.addEventListener('submit', async (e) => {
@@ -425,7 +399,7 @@ window.updateProfile = async function() {
 async function loadMyRentals() {
     const container = document.getElementById('my-rentals-list');
     try {
-        const res = await fetch(`${API_URL}/cars/my/rentals`, {
+        const res = await fetch(`${API_URL}/cars/rented`, {
             headers: { 'x-auth-token': token }
         });
         const cars = await res.json();
@@ -457,17 +431,20 @@ async function loadMyRentals() {
 
 // Новая функция для возврата
 window.returnCar = async function(id) {
-    if(!confirm("Return this vehicle?")) return;
+    //if(!confirm("Return this vehicle?")) return;
 
     try {
+        // ТУТ ТОЖЕ POST
         const res = await fetch(`${API_URL}/cars/return/${id}`, {
-            method: 'PUT',
+            method: 'POST',
             headers: { 'x-auth-token': token }
         });
 
         if (res.ok) {
-            loadMyRentals(); // Обновляем список в профиле
-            // Если мы сейчас в showroom, там тоже надо обновить (но это при следующем заходе)
+            alert('Car returned!');
+            // Если мы в профиле - обновляем профиль, если в каталоге - каталог
+            if (typeof loadMyRentals === 'function') loadMyRentals();
+            if (typeof loadCars === 'function') loadCars();
         } else {
             alert("Error returning car");
         }

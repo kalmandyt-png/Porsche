@@ -7,6 +7,23 @@ const Joi = require('joi'); // Подключаем Joi
 // @route   GET /api/cars/specs/:model
 // @desc    Get Real Specs from External API (API Ninjas)
 // @access  Public (Optional)
+// Получить машины, которые я арендую
+router.get('/rented', auth, async (req, res) => {
+  try {
+    // Сначала проверим, валидный ли у юзера ID (на всякий случай)
+    if (!req.user.id.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.json([]); // Если ID кривой, просто вернем пустой список
+    }
+
+    const cars = await Car.find({ renter: req.user.id });
+    res.json(cars);
+  } catch (err) {
+    console.error("ОШИБКА В /rented:", err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+
 router.get('/specs/:model', async (req, res, next) => {
     try {
         const model = req.params.model;
@@ -58,6 +75,7 @@ router.post('/', auth, async (req, res, next) => {
     }
 });
 
+
 // @route   GET /api/cars
 // @desc    Get all cars
 // @access  Public
@@ -93,9 +111,12 @@ router.put('/:id', auth, async (req, res, next) => {
         if (!car) return res.status(404).json({ msg: 'Car not found' });
 
         // Check user
-        if (car.owner.toString() !== req.user.id) {
+        // Если ты НЕ владелец И ПРИ ЭТОМ ты НЕ админ — тогда ошибка.
+        // А если ты админ — код пропустит тебя дальше.
+        if (car.owner && car.owner.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ msg: 'User not authorized' });
         }
+
 
         car = await Car.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
         res.json(car);
@@ -112,9 +133,11 @@ router.delete('/:id', auth, async (req, res, next) => {
         const car = await Car.findById(req.params.id);
         if (!car) return res.status(404).json({ msg: 'Car not found' });
 
-        if (car.owner.toString() !== req.user.id) {
-            return res.status(401).json({ msg: 'User not authorized' });
+                // Если ты не делаешь запрос в базу внутри этого файла, а веришь токену:
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Access denied. Not an admin.' });
         }
+
 
         await car.deleteOne();
         res.json({ msg: 'Car removed' });
@@ -125,58 +148,86 @@ router.delete('/:id', auth, async (req, res, next) => {
 // @route   PUT /api/cars/rent/:id
 // @desc    Rent a car (Change status to Rented)
 // @access  Private
-router.put('/rent/:id', auth, async (req, res, next) => {
+// --- АРЕНДА (RENT) ---
+router.post('/rent/:id', auth, async (req, res) => {
     try {
+        console.log(">>> НАЧАЛО АРЕНДЫ");
+        console.log("Кто просит:", req.user.id);
+
         const car = await Car.findById(req.params.id);
         
-        if (!car) return res.status(404).json({ msg: 'Car not found' });
-        
-        if (car.status !== 'Available') {
-            return res.status(400).json({ msg: 'Sorry, this car is already rented!' });
+        if (!car) {
+            console.log("ОШИБКА: Машина не найдена в базе");
+            return res.status(404).json({ msg: 'Car not found' });
         }
 
-        car.status = 'Rented';
-        car.renter = req.user.id; // <--- ЗАПИСЫВАЕМ, КТО АРЕНДОВАЛ
+        console.log("Машина найдена:", car.model);
+        console.log("Текущий арендатор (car.renter):", car.renter);
+
+        // Проверка: занята ли?
+        if (car.renter) {
+            console.log("ОШИБКА: Машина уже занята юзером:", car.renter);
+            return res.status(400).json({ msg: 'Car already rented' });
+        }
+
+        // Арендуем
+        car.renter = req.user.id;
         await car.save();
         
+        console.log("УСПЕХ: Машина арендована!");
         res.json(car);
+
     } catch (err) {
-        next(err);
-    }
-});
-router.get('/my/rentals', auth, async (req, res, next) => {
-    try {
-        // Ищем машины, где renter == текущий юзер
-        const cars = await Car.find({ renter: req.user.id });
-        res.json(cars);
-    } catch (err) {
-        next(err);
+        console.error("КРИТИЧЕСКАЯ ОШИБКА:", err.message);
+        res.status(500).send('Server Error');
     }
 });
 
-// @route   PUT /api/cars/return/:id
-// @desc    Return a rented car
-// @access  Private
-router.put('/return/:id', auth, async (req, res, next) => {
+
+// --- ВОЗВРАТ (RETURN) ---
+router.post('/return/:id', auth, async (req, res) => {
     try {
+        console.log(">>> НАЧАЛО ВОЗВРАТА");
+        console.log("Кто хочет вернуть:", req.user.id);
+
         const car = await Car.findById(req.params.id);
-        
-        if (!car) return res.status(404).json({ msg: 'Car not found' });
-
-        // Проверяем, действительно ли этот юзер арендовал эту машину
-        // (Приводим к строке для сравнения ID)
-        if (car.renter && car.renter.toString() !== req.user.id) {
-             return res.status(401).json({ msg: 'Not authorized to return this car' });
+        console.log("ПОПЫТКА ВОЗВРАТА:");
+        console.log("Машина Renter:", car.renter); 
+        console.log("Твой ID:", req.user.id);
+        if (!car) {
+            return res.status(404).json({ msg: 'Car not found' });
         }
 
-        car.status = 'Available';
-        car.renter = null; // Очищаем поле арендатора
+        console.log("Текущий арендатор в базе:", car.renter);
+
+        // 1. Проверка: она вообще арендована?
+        if (!car.renter) {
+            console.log("ОШИБКА: Машина и так свободна");
+            return res.status(400).json({ msg: 'Car is not rented' });
+        }
+
+        // 2. Проверка: это ты её брал?
+        // Сравниваем строки!
+        if (car.renter.toString() !== req.user.id) {
+            console.log("ОШИБКА: ID не совпали!");
+            console.log("В базе:", car.renter.toString());
+            console.log("В токене:", req.user.id);
+            return res.status(401).json({ msg: 'Not authorized to return this car' });
+        }
+
+        // Возвращаем
+        car.renter = null;
         await car.save();
         
+        console.log("УСПЕХ: Машина возвращена!");
         res.json(car);
+
     } catch (err) {
-        next(err);
+        console.error("КРИТИЧЕСКАЯ ОШИБКА:", err.message);
+        res.status(500).send('Server Error');
     }
 });
+
+
 
 module.exports = router;

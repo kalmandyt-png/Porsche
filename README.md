@@ -6,7 +6,7 @@ A full-stack luxury car rental platform built with the MERN stack (MongoDB, Expr
 
 
  Project Overview
-Porsche Hub is not just a rental site; it's a digital experience. It features a sleek, dark-themed UI with glassmorphism effects, a secure RESTful API, and real-time integration with vehicle databases.
+Porsche is not just a rental site; it's a digital experience. It features a sleek, dark-themed UI with glassmorphism effects, a secure RESTful API, and real-time integration with vehicle databases.
 
 Key Features:
 - Role-Based Access Control (RBAC): Admins manage the fleet; Users rent their dream cars.
