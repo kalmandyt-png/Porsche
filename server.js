@@ -1,7 +1,4 @@
-require('dotenv').config();
 const express = require('express');
-app.use(express.static('public'));
-
 const connectDB = require('./config/db');
 const path = require('path');
 const cors = require('cors');
@@ -12,7 +9,6 @@ const errorHandler = require('./middleware/errorHandler');
 connectDB();
 
 const app = express();
-
 app.use(
   helmet({
     contentSecurityPolicy: false,
@@ -35,15 +31,9 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/cars', require('./routes/cars'));
 
-app.get('/', (req, res) => res.send('Porsche API Running...'));
+app.get('/api', (req, res) => res.send('Porsche API Running...')); 
 
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
-});
-

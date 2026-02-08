@@ -42,7 +42,7 @@ npm install
  3. Configure Environment
 Create a `.env` file in the root directory:
 PORT=3000
-MONGO_URI=mongodb://127.0.0.1:27017/porsche-db
+MONGO_URI=mongodb+srv://k4lmbtw:OVaFdyNrwgRFu1Zt@porsche.gocmose.mongodb.net/?appName=Porsche
 JWT_SECRET=your_super_secret_key_123
 EXTERNAL_API_KEY=your_api_ninjas_key
  
@@ -50,7 +50,7 @@ EXTERNAL_API_KEY=your_api_ninjas_key
  4. Run the Server
 npm start
  
-Visit `http://localhost:3000` to view the app.
+Visit vercel link to view the app.
 
 
 
