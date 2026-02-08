@@ -1,0 +1,58 @@
+[{
+  "_id": {
+    "$oid": "69874fa141863514aee2d32a"
+  },
+  "model": "Panamera Turbo S",
+  "year": 2024,
+  "type": "Sedan",
+  "status": "Available",
+  "pricePerDay": 950,
+  "imageUrl": "https://img.autotrader.co.za/34835410",
+  "description": "Sport, comfort, and performance in a luxury sedan.",
+  "owner": {
+    "$oid": "69874a7ee157e61a38190993"
+  },
+  "createdAt": {
+    "$date": "2024-02-07T12:00:00.000Z"
+  },
+  "renter": null
+},
+{
+  "_id": {
+    "$oid": "69874fb141863514aee2d32c"
+  },
+  "model": "718 Cayman GT4 RS",
+  "year": 2023,
+  "type": "Coupe",
+  "status": "Available",
+  "pricePerDay": 1300,
+  "imageUrl": "https://hips.hearstapps.com/hmg-prod/images/dsc08690-1637086240.jpg?crop=0.852xw:0.638xh;0.0646xw,0.263xh&resize=640:*",
+  "description": "Mid-engine track weapon.",
+  "owner": {
+    "$oid": "69874a7ee157e61a38190993"
+  },
+  "createdAt": {
+    "$date": "2024-02-07T12:15:00.000Z"
+  },
+  "renter": null
+},
+{
+  "_id": {
+    "$oid": "6988caae95fd3bdc4adf4823"
+  },
+  "model": "Manta GT1",
+  "year": 2026,
+  "type": "Coupe",
+  "status": "Available",
+  "pricePerDay": 2000,
+  "imageUrl": "https://s.yimg.com/ny/api/res/1.2/FbFUK7QKONowf.7yY7Nx3A--/YXBwaWQ9aGlnaGxhbmRlcjt3PTI0MDA7aD0xMzUw/https://media.zenfs.com/en/modern_car_collector_articles_878/01a4189ffa6d5ceeeba355d44c110b14",
+  "description": "Track monster",
+  "owner": {
+    "$oid": "69874c7fb5491cb771f5eee8"
+  },
+  "renter": null,
+  "createdAt": {
+    "$date": "2026-02-08T17:41:02.906Z"
+  },
+  "__v": 0
+}]
