@@ -1,0 +1,237 @@
+/* --- Porsche Ultra-Premium Design --- */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600&family=Montserrat:wght@300;400;500;700&display=swap');
+
+:root {
+    --bg-dark: #050505;
+    --glass-bg: rgba(20, 20, 20, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-muted: #888888;
+    --accent: #d5001c; /* Porsche Red */
+    --accent-glow: rgba(213, 0, 28, 0.4);
+    --font-head: 'Exo 2', sans-serif;
+    --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    /* Темный фон с Porsche */
+    background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.95)), url('https://a.storyblok.com/f/338913/2048x1536/900347f748/kw38-992-ii-top-s.jpg/m/1299x974/filters:format(webp):quality(85)');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* --- Header with Glassmorphism --- */
+header {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(255,255,255,0.1);
+    
+    /* Добавлено для выравнивания */
+    display: flex;
+    align-items: center; 
+}
+
+
+nav button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-left: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 5px 0;
+    position: relative;
+}
+
+nav button::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s;
+}
+
+nav button:hover { color: #fff; }
+nav button:hover::after { width: 100%; }
+
+#auth-btn, #logout-btn {
+    border: 1px solid var(--glass-border);
+    padding: 8px 25px;
+    border-radius: 2px;
+}
+#auth-btn:hover, #logout-btn:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 15px var(--accent-glow);
+    background: rgba(213, 0, 28, 0.1);
+}
+
+/* --- Main Content --- */
+main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 5%;
+    animation: fadeUp 0.8s ease-out;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    font-family: var(--font-head);
+    font-weight: 300;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+}
+
+/* --- Cards (Glass Style) --- */
+.grid-container, .specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 40px;
+}
+
+.car-card, .spec-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    position: relative;
+    overflow: hidden;
+}
+
+.car-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.car-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.car-info { padding: 1.5rem; }
+
+.car-info h3 {
+    font-family: var(--font-head);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+.price {
+    font-size: 1.3rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin: 10px 0 20px 0;
+    text-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* Buttons */
+.btn-rent, .btn-delete, button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-rent, button[type="submit"] {
+    background: var(--text-primary);
+    color: #000;
+}
+.btn-rent:hover, button[type="submit"]:hover {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.btn-delete {
+    background: transparent;
+    border: 1px solid var(--glass-border) !important;
+    color: #666;
+    margin-top: 10px;
+}
+.btn-delete:hover { border-color: var(--accent) !important; color: var(--accent); }
+
+/* --- Forms --- */
+.auth-container, #add-car-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 3rem;
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+input, select {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    padding: 15px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    font-family: var(--font-body);
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+/* --- Wiki Specific --- */
+.search-bar { display: flex; gap: 0; }
+.search-bar input { border-radius: 4px 0 0 4px; margin: 0; }
+.search-bar button { width: auto; padding: 0 30px; border-radius: 0 4px 4px 0; }
+
+.spec-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.spec-table tr:last-child td { border: none; }

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porsche | Exclusive Fleet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+        <img src="https://upload.wikimedia.org/wikipedia/de/2/2d/Porsche_Wappen.svg" alt="Porsche Crest" style="height: 45px; margin-right: 15px; vertical-align: middle;">
+
+        PORSCHE
+        </div>
+
+        <nav>
+            <button onclick="showSection('showroom')">Fleet</button>
+            <button onclick="showSection('wiki')">Tech Specs</button>
+            <button onclick="showSection('profile')">My Profile</button>
+            <button id="auth-btn" onclick="showSection('auth')">Sign In</button>
+            <button id="logout-btn" onclick="logout()" style="display:none;">Sign Out</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Auth Section -->
+        <section id="auth-section" class="active">
+            <div class="auth-container">
+                <h2 style="text-align: center; margin-bottom: 30px;">Welcome.</h2>
+                
+                <div id="login-block">
+                    <form id="login-form">
+                        <input type="email" id="login-email" placeholder="Email Address" required>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <button type="submit">Log In</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
+                        New here? <a href="#" onclick="document.getElementById('register-block').style.display='block'; document.getElementById('login-block').style.display='none'; return false;" style="color: #fff;">Create account</a>
+                    </p>
+                </div>
+
+                <div id="register-block" style="display:none;">
+                    <form id="register-form">
+                        <input type="text" id="reg-username" placeholder="Username" required>
+                        <input type="email" id="reg-email" placeholder="Email Address" required>
+                        <input type="password" id="reg-password" placeholder="Password (min 6 chars)" required>
+                        <button type="submit" style="background: #fff; color: #000;">Create Account</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 20px; color: #666; font-size: 0.9rem;">
+                        Already have an account? <a href="#" onclick="document.getElementById('register-block').style.display='none'; document.getElementById('login-block').style.display='block'; return false;" style="color: #fff;">Log In</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showroom Section -->
+        <section id="showroom-section" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:end; margin-bottom: 40px;">
+                <h2>Current Fleet</h2>
+                <button button id="add-car-btn" onclick="document.getElementById('add-car-panel').style.display = document.getElementById('add-car-panel').style.display === 'none' ? 'block' : 'none'" style="background: transparent; border: 1px solid #333; padding: 10px 20px; color: #999;">+ Add Vehicle</button>
+            </div>
+
+            <div id="add-car-panel" style="display:none; margin-bottom: 40px;">
+                <h3>New Vehicle Entry</h3>
+                <form id="car-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <input type="text" id="car-model" placeholder="Model Designation" required>
+                        <input type="number" id="car-year" placeholder="Year" required>
+                    </div>
+                    <select id="car-type">
+                        <option value="Coupe">Coupe</option>
+                        <option value="Convertible">Convertible</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Sedan">Sedan</option>
+                    </select>
+                    <input type="number" id="car-price" placeholder="Daily Rate ($)" required>
+                    <input type="text" id="car-image" placeholder="Image URL (High Res)">
+                    <button type="submit">Add to Database</button>
+                </form>
+            </div>
+
+            <div id="car-list" class="grid-container">
+                <!-- Cars will load here -->
+            </div>
+        </section>
+
+        <!-- Wiki Section -->
+        <section id="wiki-section" style="display:none;">
+            <h2>Technical Specifications</h2>
+            <div class="search-bar">
+                <input type="text" id="wiki-search" placeholder="Enter Model (e.g. 911 GT3)">
+                <button onclick="searchWiki()">Search</button>
+            </div>
+            <div id="wiki-results"></div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile-section" style="display:none;">
+            <h2>Driver Profile</h2>
+            <div class="auth-container" style="max-width: 600px;">
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 20px; align-items: center; margin-bottom: 30px;">
+                    <div style="width: 80px; height: 80px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #555;">P</div>
+                    <div>
+                        <h3 id="profile-username" style="margin: 0; color: #fff; font-size: 1.5rem;">Loading...</h3>
+                        <p id="profile-email" style="color: #666; margin: 0;">Loading...</p>
+                    </div>
+                </div>
+                
+                <hr style="border-color: #333; margin: 30px 0;">
+                
+                <h3>Active Rentals</h3>
+                <div id="my-rentals-list" style="display: grid; gap: 15px;">
+                    <!-- Rentals -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
