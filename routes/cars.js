@@ -141,7 +141,9 @@ router.post('/rent/:id', auth, async (req, res) => {
         }
 
         car.renter = req.user.id;
+        car.status = 'Rented'; 
         await car.save();
+
         
         console.log("УСПЕХ: Машина арендована!");
         res.json(car);
@@ -181,7 +183,9 @@ router.post('/return/:id', auth, async (req, res) => {
         }
 
         car.renter = null;
+        car.status = 'Available'; 
         await car.save();
+
         
         console.log("УСПЕХ: Машина возвращена!");
         res.json(car);
