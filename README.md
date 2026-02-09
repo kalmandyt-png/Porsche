@@ -31,7 +31,7 @@ Tech Stack
 Installation & Setup
 
  1. Clone the Repository
-git clone https://github.com/yourusername/porsche-hub.git
+git clone https://github.com/kalmandyt-png/Porsche.git
 cd porsche-hub
  
 
